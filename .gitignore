@@ -53,3 +53,8 @@ jspm_packages/
 
 # Aider AI Chat
 .aider*
+
+# Local design notes
+DESIGN.md
+master.md
+subdoctypes.md
