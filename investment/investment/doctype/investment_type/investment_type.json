@@ -1,0 +1,140 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:investment_type",
+ "creation": "2026-09-23 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "details_section",
+  "investment_type",
+  "description",
+  "column_break_details",
+  "instrument_class",
+  "is_active",
+  "behavior_section",
+  "has_units",
+  "has_maturity",
+  "column_break_behavior",
+  "accrues_interest",
+  "is_marked_to_market",
+  "accounting_defaults_section",
+  "default_investment_account",
+  "column_break_accounting",
+  "default_interest_income_account"
+ ],
+ "fields": [
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "investment_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Investment Type",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "column_break_details",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "instrument_class",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Instrument Class",
+   "options": "Deposit\nUnits\nBond",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "behavior_section",
+   "fieldtype": "Section Break",
+   "label": "Behavior"
+  },
+  {
+   "fieldname": "has_units",
+   "fieldtype": "Check",
+   "label": "Has Units"
+  },
+  {
+   "fieldname": "has_maturity",
+   "fieldtype": "Check",
+   "label": "Has Maturity"
+  },
+  {
+   "fieldname": "column_break_behavior",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "accrues_interest",
+   "fieldtype": "Check",
+   "label": "Accrues Interest"
+  },
+  {
+   "fieldname": "is_marked_to_market",
+   "fieldtype": "Check",
+   "label": "Is Marked to Market"
+  },
+  {
+   "fieldname": "accounting_defaults_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting Defaults"
+  },
+  {
+   "fieldname": "default_investment_account",
+   "fieldtype": "Link",
+   "label": "Default Investment Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "column_break_accounting",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_interest_income_account",
+   "fieldtype": "Link",
+   "label": "Default Interest Income Account",
+   "options": "Account"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-09-23 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Investment",
+ "name": "Investment Type",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
