@@ -83,14 +83,16 @@ jobs:
       - name: Setup
         run: |
           pip install frappe-bench
-          bench init --skip-redis-config-generation --skip-assets --python "$(which python)" ~/frappe-bench
+          bench init --skip-redis-config-generation --skip-assets --frappe-branch version-16 --python "$(which python)" ~/frappe-bench
 
       - name: Install
         working-directory: /home/runner/frappe-bench
         run: |
+          bench get-app erpnext --branch version-16
           bench get-app investment $GITHUB_WORKSPACE
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
+          bench --site test_site install-app erpnext
           bench --site test_site install-app investment
           bench build
         env:

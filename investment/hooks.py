@@ -8,7 +8,7 @@ app_license = "mit"
 # Apps
 # ------------------
 
-# required_apps = []
+required_apps = ["erpnext"]
 
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
@@ -71,7 +71,7 @@ app_license = "mit"
 # website_generators = ["Web Page"]
 
 # automatically load and sync documents of this doctype from downstream apps
-# importable_doctypes = [doctype_1]
+importable_doctypes = ["Number Card"]
 
 # Jinja
 # ----------

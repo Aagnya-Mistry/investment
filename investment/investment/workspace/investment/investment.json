@@ -1,0 +1,109 @@
+{
+ "app": "investment",
+ "charts": [],
+ "content": "[{\"id\": \"inv-nc-ih\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Active Investment Holdings\", \"col\": 3}}, {\"id\": \"inv-nc-pa\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Holdings Pending Approval\", \"col\": 3}}, {\"id\": \"inv-nc-fi\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Active Financial Institutions\", \"col\": 3}}, {\"id\": \"inv-nc-it\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Active Investment Types\", \"col\": 3}}, {\"id\": \"inv-hdr-sc\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Your Shortcuts</b></span>\", \"col\": 12}}, {\"id\": \"inv-sc-ih\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Investment Holding\", \"col\": 3}}, {\"id\": \"inv-hdr-mr\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Masters &amp; Reports</b></span>\", \"col\": 12}}, {\"id\": \"inv-card-hd\", \"type\": \"card\", \"data\": {\"card_name\": \"Holdings\", \"col\": 4}}, {\"id\": \"inv-card-ms\", \"type\": \"card\", \"data\": {\"card_name\": \"Masters\", \"col\": 4}}]",
+ "creation": "2026-09-24 13:07:37.032186",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "chart",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Investment",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Holdings",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Investment Holding",
+   "link_count": 0,
+   "link_to": "Investment Holding",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Masters",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Financial Institution",
+   "link_count": 0,
+   "link_to": "Financial Institution",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Investment Type",
+   "link_count": 0,
+   "link_to": "Investment Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-09-24 18:00:00",
+ "modified_by": "Administrator",
+ "module": "Investment",
+ "name": "Investment",
+ "number_cards": [
+  {
+   "label": "Active Investment Holdings",
+   "number_card_name": "Active Investment Holdings"
+  },
+  {
+   "label": "Holdings Pending Approval",
+   "number_card_name": "Holdings Pending Approval"
+  },
+  {
+   "label": "Active Financial Institutions",
+   "number_card_name": "Active Financial Institutions"
+  },
+  {
+   "label": "Active Investment Types",
+   "number_card_name": "Active Investment Types"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [],
+ "sequence_id": 1.0,
+ "shortcuts": [
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Investment Holding",
+   "link_to": "Investment Holding",
+   "stats_filter": "[[\"Investment Holding\",\"status\",\"=\",\"Active\",false]]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Investment",
+ "type": "Workspace"
+}
