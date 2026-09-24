@@ -5,6 +5,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.model.workflow import get_workflow_name, get_workflow_state_field
+from frappe.query_builder.functions import Sum
 from frappe.utils import flt, getdate
 
 WORKFLOW_DRAFT_STATES = ("Pending Approval", "Rejected")
@@ -99,3 +100,76 @@ class InvestmentHolding(Document):
 			return None
 
 		return self.get(get_workflow_state_field(workflow_name))
+
+	def update_position(self):
+		"""Recompute lot balances and position totals from the ledger; called on transaction submit/cancel."""
+		self.update_lot_balances()
+
+		total_cost = self.get_ledger_balance(self.investment_account)
+		values = {
+			"total_cost": total_cost,
+			"accrued_interest": self.get_ledger_balance(self.accrued_interest_account),
+			"units_held": self.get_units_held(),
+			"market_value": total_cost + flt(self.unrealised_gain_loss),
+			"status": self.get_position_status(total_cost),
+		}
+		self.db_set(values)
+
+	def update_lot_balances(self):
+		from investment.investment.doctype.investment_transaction.investment_transaction import get_lots
+
+		units_sold = self.get_exited_units()
+		for lot in get_lots(self.name):
+			consumed = min(flt(lot.units), units_sold)
+			units_sold -= consumed
+
+			if flt(lot.units_remaining) != flt(lot.units) - consumed:
+				frappe.db.set_value("Investment Lot", lot.name, "units_remaining", flt(lot.units) - consumed)
+
+	def get_exited_units(self):
+		return flt(sum(t.units for t in self.get_exit_transactions()))
+
+	def get_exit_transactions(self):
+		from investment.investment.doctype.investment_transaction.investment_transaction import EXIT_TYPES
+
+		return frappe.get_all(
+			"Investment Transaction",
+			filters={"investment_holding": self.name, "docstatus": 1, "transaction_type": ("in", EXIT_TYPES)},
+			fields=["transaction_type", "units"],
+		)
+
+	def get_ledger_balance(self, account):
+		if not account:
+			return 0
+
+		gl_entry = frappe.qb.DocType("GL Entry")
+		transaction = frappe.qb.DocType("Investment Transaction")
+		balance = (
+			frappe.qb.from_(gl_entry)
+			.join(transaction)
+			.on(gl_entry.voucher_no == transaction.name)
+			.select(Sum(gl_entry.debit) - Sum(gl_entry.credit))
+			.where(gl_entry.voucher_type == "Investment Transaction")
+			.where(gl_entry.account == account)
+			.where(gl_entry.is_cancelled == 0)
+			.where(transaction.investment_holding == self.name)
+		).run()
+
+		return flt(balance[0][0], self.precision("total_cost"))
+
+	def get_units_held(self):
+		lots = frappe.get_all(
+			"Investment Lot", filters={"investment_holding": self.name}, pluck="units_remaining"
+		)
+		return flt(sum(flt(units) for units in lots))
+
+	def get_position_status(self, total_cost):
+		exit_types = {t.transaction_type for t in self.get_exit_transactions()}
+
+		if not exit_types:
+			return "Active"
+
+		if total_cost > 0:
+			return "Partially Redeemed"
+
+		return "Matured" if "Maturity" in exit_types else "Redeemed"

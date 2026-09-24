@@ -530,8 +530,19 @@
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2026-09-24 14:00:00.000000",
+ "links": [
+  {
+   "group": "Transactions",
+   "link_doctype": "Investment Transaction",
+   "link_fieldname": "investment_holding"
+  },
+  {
+   "group": "Transactions",
+   "link_doctype": "Investment Lot",
+   "link_fieldname": "investment_holding"
+  }
+ ],
+ "modified": "2026-09-24 20:00:00.000000",
  "modified_by": "Administrator",
  "module": "Investment",
  "name": "Investment Holding",
