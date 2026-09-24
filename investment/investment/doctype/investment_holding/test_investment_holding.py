@@ -2,18 +2,14 @@
 # See license.txt
 
 import frappe
-from frappe.tests import IntegrationTestCase
+from erpnext.tests.utils import ERPNextTestSuite
 from frappe.utils import add_days, nowdate
-
-IGNORE_TEST_RECORD_DEPENDENCIES = ["Account", "Company", "Cost Center", "Investment Type", "User"]
 
 TEST_COMPANY = "_Test Company"
 
 
-class TestInvestmentHolding(IntegrationTestCase):
-	@classmethod
-	def setUpClass(cls):
-		super().setUpClass()
+class TestInvestmentHolding(ERPNextTestSuite):
+	def setUp(self):
 		create_investment_type("_Test Bank FD", "Deposit")
 		create_financial_institution("_Test Bank")
 
