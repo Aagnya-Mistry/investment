@@ -1,0 +1,20 @@
+{
+ "creation": "2026-09-24 12:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Investment Type",
+ "filters_json": "[[\"Investment Type\", \"is_active\", \"=\", 1]]",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Active Investment Types",
+ "modified": "2026-09-24 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Investment",
+ "name": "Active Investment Types",
+ "owner": "Administrator",
+ "show_percentage_stats": 1,
+ "stats_time_interval": "Monthly",
+ "type": "Document Type"
+}

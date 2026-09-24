@@ -1,0 +1,65 @@
+{
+ "app": "investment",
+ "creation": "2026-09-24 12:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Workspace Sidebar",
+ "header_icon": "chart",
+ "idx": 0,
+ "items": [
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "home",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Home",
+   "link_to": "Investment",
+   "link_type": "Workspace",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "piggy-bank",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Investment Holding",
+   "link_to": "Investment Holding",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "landmark",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Financial Institution",
+   "link_to": "Financial Institution",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "layers",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Investment Type",
+   "link_to": "Investment Type",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-09-24 18:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Investment",
+ "name": "Investment",
+ "owner": "Administrator",
+ "standard": 1,
+ "title": "Investment"
+}

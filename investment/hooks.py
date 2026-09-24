@@ -71,7 +71,7 @@ app_license = "mit"
 # website_generators = ["Web Page"]
 
 # automatically load and sync documents of this doctype from downstream apps
-# importable_doctypes = [doctype_1]
+importable_doctypes = ["Number Card"]
 
 # Jinja
 # ----------
