@@ -33,6 +33,18 @@
   {
    "child": 0,
    "collapsible": 1,
+   "icon": "arrow-left-right",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Investment Transaction",
+   "link_to": "Investment Transaction",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
    "icon": "landmark",
    "indent": 0,
    "keep_closed": 0,
@@ -55,7 +67,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-24 18:00:00.000000",
+ "modified": "2026-09-24 19:00:00.000000",
  "modified_by": "Administrator",
  "module": "Investment",
  "name": "Investment",
