@@ -8,6 +8,17 @@ from frappe.model.workflow import get_workflow_name, get_workflow_state_field
 from frappe.utils import flt, getdate
 
 WORKFLOW_DRAFT_STATES = ("Pending Approval", "Rejected")
+ACCOUNT_FIELDS = (
+	"investment_account",
+	"accrued_interest_account",
+	"interest_income_account",
+	"dividend_income_account",
+	"realised_gain_loss_account",
+	"unrealised_gain_loss_account",
+	"fair_value_adjustment_account",
+	"tax_withheld_receivable_account",
+	"charges_account",
+)
 
 
 class InvestmentHolding(Document):
@@ -61,11 +72,10 @@ class InvestmentHolding(Document):
 			frappe.throw(_("Approved Amount must be greater than zero"))
 
 	def validate_company_links(self):
-		for fieldname, doctype in (
-			("investment_account", "Account"),
-			("interest_income_account", "Account"),
-			("cost_center", "Cost Center"),
-		):
+		company_links = [(fieldname, "Account") for fieldname in ACCOUNT_FIELDS]
+		company_links.append(("cost_center", "Cost Center"))
+
+		for fieldname, doctype in company_links:
 			value = self.get(fieldname)
 			if value and frappe.get_cached_value(doctype, value, "company") != self.company:
 				frappe.throw(
