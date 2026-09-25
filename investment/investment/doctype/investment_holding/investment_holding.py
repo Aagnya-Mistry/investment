@@ -19,6 +19,8 @@ ACCOUNT_FIELDS = (
 	"fair_value_adjustment_account",
 	"tax_withheld_receivable_account",
 	"charges_account",
+	"impairment_loss_account",
+	"impairment_provision_account",
 )
 
 
@@ -153,13 +155,13 @@ class InvestmentHolding(Document):
 			fields=["transaction_type", "units"],
 		)
 
-	def get_ledger_balance(self, account):
+	def get_ledger_balance(self, account, upto=None):
 		if not account:
 			return 0
 
 		gl_entry = frappe.qb.DocType("GL Entry")
 		transaction = frappe.qb.DocType("Investment Transaction")
-		balance = (
+		query = (
 			frappe.qb.from_(gl_entry)
 			.join(transaction)
 			.on(gl_entry.voucher_no == transaction.name)
@@ -168,7 +170,11 @@ class InvestmentHolding(Document):
 			.where(gl_entry.account == account)
 			.where(gl_entry.is_cancelled == 0)
 			.where(transaction.investment_holding == self.name)
-		).run()
+		)
+		if upto:
+			query = query.where(gl_entry.posting_date <= upto)
+
+		balance = query.run()
 
 		return flt(balance[0][0], self.precision("total_cost"))
 
@@ -195,3 +201,33 @@ class InvestmentHolding(Document):
 			return "Partially Redeemed"
 
 		return "Matured" if "Maturity" in exit_types else "Redeemed"
+
+	def update_valuation(self):
+		"""Take the figures of the latest submitted Investment Valuations; called on valuation submit/cancel."""
+		from investment.investment.doctype.investment_valuation.investment_valuation import (
+			get_latest_valuation_row,
+		)
+
+		market_row = get_latest_valuation_row(self.name, "Market Valuation")
+		impairment_row = get_latest_valuation_row(self.name, "Impairment Assessment")
+		unrealised_gain_loss = flt(market_row.unrealised_gain_loss) if market_row else 0
+
+		self.db_set(
+			{
+				"unrealised_gain_loss": unrealised_gain_loss,
+				"market_value": flt(self.total_cost) + unrealised_gain_loss,
+				"impairment_provision": flt(impairment_row.provision_amount) if impairment_row else 0,
+			}
+		)
+
+	def get_account(self, fieldname):
+		"""Ledger account set on this holding; throws if it is missing."""
+		account = self.get(fieldname)
+		if not account:
+			frappe.throw(
+				_("Please set {0} in Investment Holding {1}").format(
+					frappe.bold(_(self.meta.get_label(fieldname))), frappe.bold(self.name)
+				)
+			)
+
+		return account

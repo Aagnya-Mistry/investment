@@ -505,17 +505,7 @@ class InvestmentTransaction(AccountsController):
 		return entries
 
 	def get_holding_account(self, fieldname):
-		holding = self.get_holding()
-		account = holding.get(fieldname)
-
-		if not account:
-			frappe.throw(
-				_("Please set {0} in Investment Holding {1}").format(
-					frappe.bold(_(holding.meta.get_label(fieldname))), frappe.bold(holding.name)
-				)
-			)
-
-		return account
+		return self.get_holding().get_account(fieldname)
 
 	def get_gl_entry(self, account, debit, credit):
 		precision = self.precision("net_amount")
