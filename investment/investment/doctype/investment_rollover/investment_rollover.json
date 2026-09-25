@@ -1,0 +1,238 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-09-25 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "details_section",
+  "naming_series",
+  "original_holding",
+  "instrument_class",
+  "company",
+  "currency",
+  "column_break_details",
+  "rollover_date",
+  "rollover_type",
+  "new_holding",
+  "new_terms_changed",
+  "amounts_section",
+  "principal_rolled_over",
+  "interest_rolled_over",
+  "column_break_amounts",
+  "total_rolled_over",
+  "remarks_section",
+  "remarks",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "default": "INV-ROLL-.YYYY.-",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "no_copy": 1,
+   "options": "INV-ROLL-.YYYY.-",
+   "print_hide": 1,
+   "reqd": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "original_holding",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Original Holding",
+   "options": "Investment Holding",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "original_holding.instrument_class",
+   "fieldname": "instrument_class",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Instrument Class",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "original_holding.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fetch_from": "original_holding.currency",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_details",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "rollover_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Rollover Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "rollover_type",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Rollover Type",
+   "options": "\nAuto Renewal\nSwitch Scheme\nReinvestment",
+   "read_only": 1
+  },
+  {
+   "description": "Created as a draft when this Rollover is submitted",
+   "fieldname": "new_holding",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "New Holding",
+   "no_copy": 1,
+   "options": "Investment Holding",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.new_holding",
+   "description": "Ticked when the new holding's rate, tenure or payout terms differ from the original",
+   "fieldname": "new_terms_changed",
+   "fieldtype": "Check",
+   "label": "New Terms Changed",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "amounts_section",
+   "fieldtype": "Section Break",
+   "label": "Amounts"
+  },
+  {
+   "fieldname": "principal_rolled_over",
+   "fieldtype": "Currency",
+   "label": "Principal Rolled Over",
+   "options": "currency",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:in_list(['Deposit', 'Bond'], doc.instrument_class)",
+   "fieldname": "interest_rolled_over",
+   "fieldtype": "Currency",
+   "label": "Interest Rolled Over",
+   "options": "currency"
+  },
+  {
+   "fieldname": "column_break_amounts",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Principal + Interest Rolled Over; becomes the new holding's Approved Amount",
+   "fieldname": "total_rolled_over",
+   "fieldtype": "Currency",
+   "label": "Total Rolled Over",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "remarks_section",
+   "fieldtype": "Section Break",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Investment Rollover",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-09-25 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Investment",
+ "name": "Investment Rollover",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "original_holding,new_holding,rollover_type",
+ "show_title_field_in_link": 0,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

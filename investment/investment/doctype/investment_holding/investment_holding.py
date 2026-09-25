@@ -32,6 +32,13 @@ class InvestmentHolding(Document):
 		self.validate_company_links()
 		self.set_status()
 
+	def on_update(self):
+		from investment.investment.doctype.investment_rollover.investment_rollover import (
+			update_new_terms_changed,
+		)
+
+		update_new_terms_changed(self)
+
 	def before_submit(self):
 		self.approved_by = frappe.session.user
 
