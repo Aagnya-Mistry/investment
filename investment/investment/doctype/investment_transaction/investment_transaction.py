@@ -9,10 +9,20 @@ from erpnext.accounts.general_ledger import make_gl_entries, make_reverse_gl_ent
 from erpnext.controllers.accounts_controller import AccountsController
 from frappe import _
 from frappe.query_builder.functions import Sum
-from frappe.utils import flt, getdate
+from frappe.utils import add_days, flt, getdate
+
+from investment.investment.doctype.investment_interest_accrual.investment_interest_accrual import (
+	accrue_interest,
+	get_accrued_upto,
+	get_schedule_period,
+	update_posted_amounts,
+	update_schedule,
+)
+from investment.investment.interest import INTEREST_CLASSES, InterestCalculator
 
 PURCHASE_TYPES = ("Opening", "Purchase", "Additional Purchase")
 EXIT_TYPES = ("Sale", "Redemption", "Withdrawal", "Maturity")
+INCOME_TYPES = ("Interest Accrual", "Interest Receipt", "Dividend")
 INFLOW_TYPES = (*EXIT_TYPES, "Interest Receipt", "Dividend")
 NON_CASH_TYPES = ("Opening", "Interest Accrual")
 UNIT_CLASSES = ("Units", "Bond")
@@ -33,6 +43,7 @@ class InvestmentTransaction(AccountsController):
 	def validate(self):
 		self.validate_holding()
 		self.validate_transaction_type()
+		self.validate_has_investment()
 		self.validate_dates()
 		self.set_missing_values()
 		self.validate_amounts()
@@ -40,18 +51,24 @@ class InvestmentTransaction(AccountsController):
 		self.validate_cash_account()
 		self.validate_approved_amount()
 		self.validate_available_balance()
+		self.validate_accrual_period()
+		self.validate_after_accrued_interest()
 
 	def before_submit(self):
+		self.accrue_interest_before_exit()
 		self.set_cost_and_realised_gain_loss()
 
 	def on_submit(self):
 		self.create_lot()
 		self.make_gl_entries()
 		self.update_holding()
+		self.update_interest_schedule()
 
 	def before_cancel(self):
 		super().before_cancel()
 		self.validate_purchase_not_consumed()
+		self.validate_after_accrued_interest()
+		self.validate_latest_accrual()
 
 	def on_cancel(self):
 		super().on_cancel()
@@ -59,6 +76,7 @@ class InvestmentTransaction(AccountsController):
 		self.delete_lot()
 		make_reverse_gl_entries(voucher_type=self.doctype, voucher_no=self.name)
 		self.update_holding()
+		self.update_interest_schedule()
 
 	def get_holding(self):
 		if not getattr(self, "_holding", None):
@@ -80,6 +98,18 @@ class InvestmentTransaction(AccountsController):
 			frappe.throw(
 				_("Transaction Type {0} is not allowed for {1} instruments").format(
 					frappe.bold(self.transaction_type), frappe.bold(self.instrument_class)
+				)
+			)
+
+	def validate_has_investment(self):
+		"""Income can only be earned once money is actually invested in the holding."""
+		if self.transaction_type not in INCOME_TYPES:
+			return
+
+		if not frappe.db.exists("Investment Lot", {"investment_holding": self.investment_holding}):
+			frappe.throw(
+				_("Please record a Purchase or Opening for Investment Holding {0} first").format(
+					frappe.bold(self.investment_holding)
 				)
 			)
 
@@ -229,12 +259,95 @@ class InvestmentTransaction(AccountsController):
 				)
 			)
 
+	def is_principal_movement(self):
+		return self.instrument_class in INTEREST_CLASSES and self.transaction_type in (
+			*PURCHASE_TYPES,
+			*EXIT_TYPES,
+		)
+
+	def validate_accrual_period(self):
+		if self.transaction_type != "Interest Accrual":
+			return
+
+		period = get_schedule_period(self.investment_holding, self.accrual_period_from)
+		if not period or getdate(self.accrual_period_to) > getdate(period.period_to):
+			frappe.throw(
+				_("Accrual Period must fall within a single period of the holding's interest schedule")
+			)
+
+		overlapping_accrual = self.get_overlapping_accrual()
+		if overlapping_accrual:
+			frappe.throw(
+				_("Interest for this period is already accrued in {0}").format(
+					frappe.bold(overlapping_accrual)
+				)
+			)
+
+	def get_overlapping_accrual(self):
+		return frappe.db.get_value(
+			"Investment Transaction",
+			{
+				"investment_holding": self.investment_holding,
+				"transaction_type": "Interest Accrual",
+				"docstatus": 1,
+				"name": ("!=", self.name or ""),
+				"accrual_period_from": ("<=", self.accrual_period_to),
+				"accrual_period_to": (">=", self.accrual_period_from),
+			},
+			"name",
+		)
+
+	def validate_after_accrued_interest(self):
+		"""Posted interest assumed the old principal, so principal cannot change on or before it."""
+		if not self.is_principal_movement():
+			return
+
+		accrued_upto = get_accrued_upto(self.investment_holding)
+		if accrued_upto and getdate(self.posting_date) <= getdate(accrued_upto):
+			frappe.throw(
+				_(
+					"Interest is already accrued up to {0}. Cancel the Interest Accrual transactions from {1} onwards first."
+				).format(frappe.bold(accrued_upto), frappe.bold(self.posting_date))
+			)
+
+	def validate_latest_accrual(self):
+		if self.transaction_type != "Interest Accrual":
+			return
+
+		if frappe.db.exists(
+			"Investment Transaction",
+			{
+				"investment_holding": self.investment_holding,
+				"transaction_type": "Interest Accrual",
+				"docstatus": 1,
+				"accrual_period_from": (">", self.accrual_period_to),
+			},
+		):
+			frappe.throw(_("Please cancel the later Interest Accrual transactions of this holding first"))
+
+	def accrue_interest_before_exit(self):
+		"""Book interest (and bond amortisation) up to the day before the exit, so the exit clears it."""
+		if self.is_principal_movement() and self.transaction_type in EXIT_TYPES:
+			accrue_interest(self.investment_holding, add_days(self.posting_date, -1))
+
+	def update_interest_schedule(self):
+		if self.instrument_class not in INTEREST_CLASSES:
+			return
+
+		if self.transaction_type == "Interest Accrual":
+			update_posted_amounts(self.investment_holding)
+		elif self.is_principal_movement():
+			update_schedule(self.investment_holding)
+
 	def set_cost_and_realised_gain_loss(self):
 		if self.transaction_type not in EXIT_TYPES:
 			return
 
-		if self.instrument_class in UNIT_CLASSES:
-			units_already_sold = self.get_submitted_total("units", EXIT_TYPES)
+		units_already_sold = self.get_submitted_total("units", EXIT_TYPES)
+		if self.instrument_class == "Bond":
+			calculator = InterestCalculator(self.get_holding())
+			cost = calculator.get_carrying_cost(units_already_sold, flt(self.units), self.posting_date)
+		elif self.instrument_class in UNIT_CLASSES:
 			cost = get_fifo_cost(get_lots(self.investment_holding), units_already_sold, flt(self.units))
 		else:
 			cost = flt(self.gross_amount)
@@ -335,9 +448,13 @@ class InvestmentTransaction(AccountsController):
 		return entries + self.get_charges_and_tax_entries()
 
 	def get_interest_accrual_gl_entries(self):
+		"""Coupon accrued, plus bond discount earned (positive) or premium written off (negative)."""
+		amortisation = flt(self.amortisation_amount)
+		income = flt(self.interest_amount) + amortisation
 		return [
 			(self.get_holding_account("accrued_interest_account"), self.interest_amount, 0),
-			(self.get_holding_account("interest_income_account"), 0, self.interest_amount),
+			(self.get_holding_account("investment_account"), max(amortisation, 0), max(-amortisation, 0)),
+			(self.get_holding_account("interest_income_account"), max(-income, 0), max(income, 0)),
 		]
 
 	def get_income_receipt_gl_entries(self):
@@ -420,7 +537,7 @@ def get_lots(investment_holding):
 	return frappe.get_all(
 		"Investment Lot",
 		filters={"investment_holding": investment_holding},
-		fields=["name", "investment_transaction", "units", "amount", "units_remaining"],
+		fields=["name", "investment_transaction", "purchase_date", "units", "amount", "units_remaining"],
 		order_by="purchase_date asc, creation asc",
 	)
 
