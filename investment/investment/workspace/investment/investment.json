@@ -17,7 +17,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Holdings",
-   "link_count": 3,
+   "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -56,6 +56,17 @@
    "type": "Link"
   },
   {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Investment Interest Accrual",
+   "link_count": 0,
+   "link_to": "Investment Interest Accrual",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Masters",
@@ -87,7 +98,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-24 19:00:00",
+ "modified": "2026-09-25 10:00:00",
  "modified_by": "Administrator",
  "module": "Investment",
  "name": "Investment",
