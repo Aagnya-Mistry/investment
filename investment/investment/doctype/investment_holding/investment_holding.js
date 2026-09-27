@@ -34,6 +34,15 @@ frappe.ui.form.on("Investment Holding", {
 		if (frm.doc.docstatus === 1 && ["Deposit", "Bond"].includes(frm.doc.instrument_class)) {
 			frm.add_custom_button(__("Accrue Interest"), () => accrue_interest(frm));
 		}
+
+		if (
+			frm.doc.docstatus === 1 &&
+			["Partially Redeemed", "Matured", "Redeemed"].includes(frm.doc.status)
+		) {
+			frm.add_custom_button(__("Roll Over"), () =>
+				frappe.new_doc("Investment Rollover", { original_holding: frm.doc.name })
+			);
+		}
 	},
 });
 

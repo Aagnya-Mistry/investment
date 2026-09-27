@@ -546,9 +546,14 @@
    "group": "Interest",
    "link_doctype": "Investment Interest Accrual",
    "link_fieldname": "investment_holding"
+  },
+  {
+   "group": "Rollover",
+   "link_doctype": "Investment Rollover",
+   "link_fieldname": "original_holding"
   }
  ],
- "modified": "2026-09-24 18:00:00.000000",
+ "modified": "2026-09-25 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Investment",
  "name": "Investment Holding",

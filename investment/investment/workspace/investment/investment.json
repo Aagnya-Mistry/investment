@@ -17,7 +17,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Holdings",
-   "link_count": 4,
+   "link_count": 5,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -67,6 +67,17 @@
    "type": "Link"
   },
   {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Investment Rollover",
+   "link_count": 0,
+   "link_to": "Investment Rollover",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Masters",
@@ -98,7 +109,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-25 10:00:00",
+ "modified": "2026-09-25 16:00:00",
  "modified_by": "Administrator",
  "module": "Investment",
  "name": "Investment",
