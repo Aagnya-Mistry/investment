@@ -17,6 +17,8 @@ frappe.ui.form.on("Investment Holding", {
 			"fair_value_adjustment_account",
 			"tax_withheld_receivable_account",
 			"charges_account",
+			"impairment_loss_account",
+			"impairment_provision_account",
 		]) {
 			frm.set_query(fieldname, () => ({
 				filters: { company: frm.doc.company, is_group: 0 },

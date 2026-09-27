@@ -1,0 +1,194 @@
+{
+ "actions": [],
+ "creation": "2026-09-25 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "investment_holding",
+  "instrument_class",
+  "holding_currency",
+  "measurement_category",
+  "posts_gl_entry",
+  "units_held",
+  "nav_per_unit",
+  "market_price",
+  "conversion_rate",
+  "ecl_stage",
+  "provision_amount",
+  "credit_rating",
+  "column_break_values",
+  "book_value",
+  "fair_value",
+  "unrealised_gain_loss",
+  "previous_amount",
+  "adjustment_amount"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "investment_holding",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Investment Holding",
+   "options": "Investment Holding",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "investment_holding.instrument_class",
+   "fieldname": "instrument_class",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Instrument Class",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "investment_holding.currency",
+   "fieldname": "holding_currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Holding Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "investment_holding.measurement_category",
+   "fieldname": "measurement_category",
+   "fieldtype": "Data",
+   "label": "Measurement Category",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "description": "Ticked when this holding's Measurement Category needs a GL entry for this valuation type",
+   "fieldname": "posts_gl_entry",
+   "fieldtype": "Check",
+   "label": "Posts GL Entry",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:in_list(['Units', 'Bond'], doc.instrument_class) && parent.valuation_type=='Market Valuation'",
+   "fieldname": "units_held",
+   "fieldtype": "Float",
+   "label": "Units Held",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "depends_on": "eval:doc.instrument_class=='Units' && parent.valuation_type=='Market Valuation'",
+   "fieldname": "nav_per_unit",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "NAV per Unit",
+   "options": "holding_currency"
+  },
+  {
+   "columns": 1,
+   "depends_on": "eval:doc.instrument_class=='Bond' && parent.valuation_type=='Market Valuation'",
+   "description": "Price per unit (bond)",
+   "fieldname": "market_price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Market Price",
+   "options": "holding_currency"
+  },
+  {
+   "default": "1",
+   "depends_on": "eval:parent.valuation_type=='Market Valuation'",
+   "description": "Holding currency to company currency",
+   "fieldname": "conversion_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate",
+   "precision": "9"
+  },
+  {
+   "depends_on": "eval:parent.valuation_type=='Impairment Assessment'",
+   "fieldname": "ecl_stage",
+   "fieldtype": "Select",
+   "label": "ECL Stage",
+   "options": "\nStage 1\nStage 2\nStage 3"
+  },
+  {
+   "columns": 1,
+   "depends_on": "eval:parent.valuation_type=='Impairment Assessment'",
+   "description": "Total expected credit loss for this holding as on the valuation date",
+   "fieldname": "provision_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Provision Amount",
+   "options": "currency"
+  },
+  {
+   "depends_on": "eval:doc.instrument_class=='Bond'",
+   "fieldname": "credit_rating",
+   "fieldtype": "Data",
+   "label": "Credit Rating at Valuation"
+  },
+  {
+   "fieldname": "column_break_values",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 1,
+   "description": "Carrying value from the ledger as on the valuation date",
+   "fieldname": "book_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Book Value",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "depends_on": "eval:parent.valuation_type=='Market Valuation'",
+   "fieldname": "fair_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Fair Value",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "depends_on": "eval:parent.valuation_type=='Market Valuation'",
+   "description": "Fair Value - Book Value",
+   "fieldname": "unrealised_gain_loss",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Unrealised Gain / Loss",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "description": "Unrealised gain / loss or provision from this holding's last valuation of the same type",
+   "fieldname": "previous_amount",
+   "fieldtype": "Currency",
+   "label": "Previous Amount",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "description": "Amount posted by this valuation: new amount - Previous Amount",
+   "fieldname": "adjustment_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Change This Run",
+   "options": "currency",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-25 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Investment",
+ "name": "Investment Valuation Holding",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

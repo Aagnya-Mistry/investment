@@ -56,6 +56,8 @@
   "unrealised_gain_loss_account",
   "fair_value_adjustment_account",
   "tax_withheld_receivable_account",
+  "impairment_loss_account",
+  "impairment_provision_account",
   "approval_section",
   "approved_amount",
   "investment_rationale",
@@ -69,6 +71,7 @@
   "column_break_position",
   "unamortised_premium_discount",
   "unrealised_gain_loss",
+  "impairment_provision",
   "market_value",
   "amended_from"
  ],
@@ -416,6 +419,22 @@
    "options": "Account"
   },
   {
+   "depends_on": "eval:in_list(['Deposit', 'Bond'], doc.instrument_class) && doc.measurement_category!='FVTPL'",
+   "description": "Expense booked when an Impairment Assessment raises the provision",
+   "fieldname": "impairment_loss_account",
+   "fieldtype": "Link",
+   "label": "Impairment Loss Account",
+   "options": "Account"
+  },
+  {
+   "depends_on": "eval:in_list(['Deposit', 'Bond'], doc.instrument_class) && doc.measurement_category=='Amortized Cost'",
+   "description": "Provision that reduces the carrying value of the holding",
+   "fieldname": "impairment_provision_account",
+   "fieldtype": "Link",
+   "label": "Impairment Provision Account",
+   "options": "Account"
+  },
+  {
    "fieldname": "approval_section",
    "fieldtype": "Section Break",
    "label": "Approval"
@@ -511,6 +530,16 @@
   },
   {
    "allow_on_submit": 1,
+   "depends_on": "eval:in_list(['Deposit', 'Bond'], doc.instrument_class)",
+   "fieldname": "impairment_provision",
+   "fieldtype": "Currency",
+   "label": "Impairment Provision",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
    "fieldname": "market_value",
    "fieldtype": "Currency",
    "label": "Market Value",
@@ -551,9 +580,17 @@
    "group": "Rollover",
    "link_doctype": "Investment Rollover",
    "link_fieldname": "original_holding"
+  },
+  {
+   "group": "Valuation",
+   "is_child_table": 1,
+   "link_doctype": "Investment Valuation",
+   "link_fieldname": "investment_holding",
+   "parent_doctype": "Investment Valuation",
+   "table_fieldname": "holdings"
   }
  ],
- "modified": "2026-09-25 00:00:00.000000",
+ "modified": "2026-09-25 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Investment",
  "name": "Investment Holding",
