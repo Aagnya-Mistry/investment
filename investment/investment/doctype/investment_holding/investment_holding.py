@@ -38,6 +38,13 @@ class InvestmentHolding(Document):
 	def on_cancel(self):
 		self.db_set("status", "Cancelled")
 
+	def on_trash(self):
+		# the interest schedule is a system-made helper of this holding, so it goes with it
+		for schedule_name in frappe.get_all(
+			"Investment Interest Accrual", filters={"investment_holding": self.name}, pluck="name"
+		):
+			frappe.delete_doc("Investment Interest Accrual", schedule_name, ignore_permissions=True)
+
 	def validate_investment_type_is_active(self):
 		if self.docstatus == 0 and not frappe.db.get_value(
 			"Investment Type", self.investment_type, "is_active"
@@ -111,6 +118,7 @@ class InvestmentHolding(Document):
 			"accrued_interest": self.get_ledger_balance(self.accrued_interest_account),
 			"units_held": self.get_units_held(),
 			"market_value": total_cost + flt(self.unrealised_gain_loss),
+			"unamortised_premium_discount": self.get_unamortised_premium_discount(total_cost),
 			"status": self.get_position_status(total_cost),
 		}
 		self.db_set(values)
@@ -156,6 +164,13 @@ class InvestmentHolding(Document):
 		).run()
 
 		return flt(balance[0][0], self.precision("total_cost"))
+
+	def get_unamortised_premium_discount(self, total_cost):
+		"""Face value still held minus its book value: positive is discount, negative is premium."""
+		if self.instrument_class != "Bond":
+			return 0
+
+		return flt(self.get_units_held() * flt(self.face_value) - total_cost, self.precision("total_cost"))
 
 	def get_units_held(self):
 		lots = frappe.get_all(

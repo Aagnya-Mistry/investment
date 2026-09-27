@@ -28,3 +28,41 @@ frappe.ui.form.on("Investment Holding", {
 		}));
 	},
 });
+
+frappe.ui.form.on("Investment Holding", {
+	refresh(frm) {
+		if (frm.doc.docstatus === 1 && ["Deposit", "Bond"].includes(frm.doc.instrument_class)) {
+			frm.add_custom_button(__("Accrue Interest"), () => accrue_interest(frm));
+		}
+	},
+});
+
+function accrue_interest(frm) {
+	frappe.prompt(
+		{
+			fieldname: "upto",
+			fieldtype: "Date",
+			label: __("Accrue Interest Upto"),
+			default: frappe.datetime.get_today(),
+			reqd: 1,
+		},
+		(values) => {
+			frappe.call({
+				method: "investment.investment.doctype.investment_interest_accrual.investment_interest_accrual.accrue_interest_upto",
+				args: { investment_holding: frm.doc.name, upto: values.upto },
+				freeze: true,
+				callback(r) {
+					const count = (r.message || []).length;
+					frappe.show_alert({
+						message: count
+							? __("{0} Interest Accrual transaction(s) posted", [count])
+							: __("No interest left to accrue up to this date"),
+						indicator: count ? "green" : "blue",
+					});
+					frm.reload_doc();
+				},
+			});
+		},
+		__("Accrue Interest")
+	);
+}

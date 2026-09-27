@@ -232,6 +232,7 @@
    "label": "Bond"
   },
   {
+   "description": "Positive for discount earned, negative for premium written off",
    "fieldname": "amortisation_amount",
    "fieldtype": "Currency",
    "label": "Amortisation Amount",
@@ -369,7 +370,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-24 14:00:00.000000",
+ "modified": "2026-09-24 18:00:00.000000",
  "modified_by": "Administrator",
  "module": "Investment",
  "name": "Investment Transaction",

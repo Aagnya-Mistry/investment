@@ -1,0 +1,149 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-09-24 18:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "details_section",
+  "naming_series",
+  "investment_holding",
+  "instrument_class",
+  "company",
+  "column_break_details",
+  "status",
+  "accrued_upto",
+  "currency",
+  "schedule_section",
+  "periods"
+ ],
+ "fields": [
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "default": "INV-ACCR-.YYYY.-",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "no_copy": 1,
+   "options": "INV-ACCR-.YYYY.-",
+   "print_hide": 1,
+   "reqd": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "investment_holding",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Investment Holding",
+   "options": "Investment Holding",
+   "read_only": 1,
+   "reqd": 1,
+   "search_index": 1,
+   "unique": 1
+  },
+  {
+   "fetch_from": "investment_holding.instrument_class",
+   "fieldname": "instrument_class",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Instrument Class",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "investment_holding.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_details",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Active\nCancelled",
+   "read_only": 1
+  },
+  {
+   "fieldname": "accrued_upto",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Accrued Upto",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fetch_from": "investment_holding.currency",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "schedule_section",
+   "fieldtype": "Section Break",
+   "label": "Schedule"
+  },
+  {
+   "fieldname": "periods",
+   "fieldtype": "Table",
+   "label": "Periods",
+   "options": "Investment Interest Accrual Period",
+   "read_only": 1
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-09-25 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Investment",
+ "name": "Investment Interest Accrual",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User"
+  },
+  {
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager"
+  },
+  {
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager"
+  }
+ ],
+ "search_fields": "investment_holding,status",
+ "show_title_field_in_link": 0,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

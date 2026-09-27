@@ -167,6 +167,12 @@ importable_doctypes = ["Number Card"]
 # 	],
 # }
 
+scheduler_events = {
+	"daily": [
+		"investment.investment.doctype.investment_interest_accrual.investment_interest_accrual.accrue_interest_for_all_holdings"
+	],
+}
+
 # Testing
 # -------
 
