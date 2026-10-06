@@ -12,15 +12,15 @@ from investment.treasury.dashboard import HELD_STATUSES, get_company, get_month_
 @frappe.whitelist()
 @cache_source
 def get(
-	chart_name=None,
-	chart=None,
-	no_cache=None,
-	filters=None,
-	from_date=None,
-	to_date=None,
-	timespan=None,
-	time_interval=None,
-	heatmap_year=None,
+	chart_name: str | None = None,
+	chart: str | dict | None = None,
+	no_cache: bool | int | str | None = None,
+	filters: str | dict | None = None,
+	from_date: str | None = None,
+	to_date: str | None = None,
+	timespan: str | None = None,
+	time_interval: str | None = None,
+	heatmap_year: str | int | None = None,
 ):
 	"""Book value of held investments maturing in each of the next 12 months."""
 	month_ends = get_month_ends(nowdate(), 12)

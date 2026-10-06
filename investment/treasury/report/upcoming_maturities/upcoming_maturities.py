@@ -12,40 +12,48 @@ from investment.treasury.report.utils import (
 	get_positions,
 )
 
-# (upper limit in days to maturity, label); a negative count means the maturity date has passed
-BUCKETS = (
-	(-1, _("Overdue")),
-	(30, _("0-30 Days")),
-	(90, _("31-90 Days")),
-	(180, _("91-180 Days")),
-	(365, _("181-365 Days")),
-)
-LAST_BUCKET = _("Over 1 Year")
+# upper limit in days to maturity of each bucket; a negative count means the maturity date has passed
+BUCKET_LIMITS = (-1, 30, 90, 180, 365)
 
 
 def execute(filters=None):
 	filters = frappe._dict(filters or {})
 	data = [row for row in get_positions(filters, filters.as_on_date) if row.maturity_date]
+	labels = get_bucket_labels()
 	for row in data:
 		row.days_to_maturity = date_diff(row.maturity_date, filters.as_on_date)
-		row.bucket = get_bucket(row.days_to_maturity)
+		row.bucket = get_bucket(row.days_to_maturity, labels)
 		row.total = flt(row.book_value) + flt(row.accrued_interest)
 
 	data.sort(key=lambda row: row.maturity_date)
-	chart = get_chart(data)
+	chart = get_chart(data, labels)
 	if data:
 		add_total_row(data, ("book_value", "accrued_interest", "total"), "investment", data[0].currency)
 
 	return get_columns(), data, None, chart
 
 
-def get_bucket(days_to_maturity):
-	return next((label for limit, label in BUCKETS if days_to_maturity <= limit), LAST_BUCKET)
+def get_bucket_labels():
+	"""One label per bucket limit, then one for anything later."""
+	return [
+		_("Overdue"),
+		_("0-30 Days"),
+		_("31-90 Days"),
+		_("91-180 Days"),
+		_("181-365 Days"),
+		_("Over 1 Year"),
+	]
 
 
-def get_chart(data):
+def get_bucket(days_to_maturity, labels):
+	index = next(
+		(i for i, limit in enumerate(BUCKET_LIMITS) if days_to_maturity <= limit), len(BUCKET_LIMITS)
+	)
+	return labels[index]
+
+
+def get_chart(data, labels):
 	"""Book value maturing in each bucket, in bucket order."""
-	labels = [label for _limit, label in BUCKETS] + [LAST_BUCKET]
 	totals = dict.fromkeys(labels, 0)
 	for row in data:
 		totals[row.bucket] += flt(row.book_value)

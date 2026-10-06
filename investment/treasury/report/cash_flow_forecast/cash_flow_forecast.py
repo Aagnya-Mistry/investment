@@ -13,15 +13,8 @@ from investment.treasury.doctype.investment_transaction.investment_transaction i
 from investment.treasury.report.bank_and_cash_balances.bank_and_cash_balances import get_cash_balances
 from investment.treasury.report.utils import get_currency_column
 
-INFLOWS = (
-	("receivables", _("Customer Receivables")),
-	("maturities", _("Investment Maturities")),
-	("interest", _("Investment Interest")),
-)
-OUTFLOWS = (
-	("payables", _("Supplier Payables")),
-	("commitments", _("Committed Investments")),
-)
+INFLOWS = ("receivables", "maturities", "interest")
+OUTFLOWS = ("payables", "commitments")
 
 
 def execute(filters=None):
@@ -42,8 +35,9 @@ def get_period_ends(filters):
 
 def get_data(filters, period_ends):
 	flows = {**get_party_flows(filters.company), **get_investment_flows(filters)}
-	inflows = {key: get_period_totals(flows[key], period_ends, filters) for key, _label in INFLOWS}
-	outflows = {key: get_period_totals(flows[key], period_ends, filters) for key, _label in OUTFLOWS}
+	inflows = {key: get_period_totals(flows[key], period_ends, filters) for key in INFLOWS}
+	outflows = {key: get_period_totals(flows[key], period_ends, filters) for key in OUTFLOWS}
+	labels = get_flow_labels()
 	total_in, total_out = sum_columns(inflows.values()), sum_columns(outflows.values())
 	net = [inflow - outflow for inflow, outflow in zip(total_in, total_out, strict=True)]
 	opening, closing = get_running_balances(get_opening_balance(filters), net)
@@ -52,14 +46,24 @@ def get_data(filters, period_ends):
 	return [
 		row(_("Opening Balance"), opening, bold=1, total=opening[0]),
 		row(_("Cash Inflows"), bold=1),
-		*[row(label, inflows[key]) for key, label in INFLOWS],
+		*[row(labels[key], inflows[key]) for key in INFLOWS],
 		row(_("Total Inflows"), total_in, bold=1),
 		row(_("Cash Outflows"), bold=1),
-		*[row(label, outflows[key]) for key, label in OUTFLOWS],
+		*[row(labels[key], outflows[key]) for key in OUTFLOWS],
 		row(_("Total Outflows"), total_out, bold=1),
 		row(_("Net Cash Flow"), net, bold=1),
 		row(_("Closing Balance"), closing, bold=1, total=closing[-1]),
 	]
+
+
+def get_flow_labels():
+	return {
+		"receivables": _("Customer Receivables"),
+		"maturities": _("Investment Maturities"),
+		"interest": _("Investment Interest"),
+		"payables": _("Supplier Payables"),
+		"commitments": _("Committed Investments"),
+	}
 
 
 def get_party_flows(company):

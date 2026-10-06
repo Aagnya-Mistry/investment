@@ -12,15 +12,15 @@ from investment.treasury.dashboard import get_company, get_income_query, get_mon
 @frappe.whitelist()
 @cache_source
 def get(
-	chart_name=None,
-	chart=None,
-	no_cache=None,
-	filters=None,
-	from_date=None,
-	to_date=None,
-	timespan=None,
-	time_interval=None,
-	heatmap_year=None,
+	chart_name: str | None = None,
+	chart: str | dict | None = None,
+	no_cache: bool | int | str | None = None,
+	filters: str | dict | None = None,
+	from_date: str | None = None,
+	to_date: str | None = None,
+	timespan: str | None = None,
+	time_interval: str | None = None,
+	heatmap_year: str | int | None = None,
 ):
 	"""Interest income, including bond amortisation, booked in each of the last 12 months."""
 	frappe.has_permission("Investment Transaction", throw=True)
